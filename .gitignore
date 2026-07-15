@@ -51,3 +51,22 @@ venv/
 ENV/
 env/
 
+# IDE
+.vscode/
+
+# Flutter auto-generated
+.flutter-plugins
+.metadata
+
+# Unused platform targets
+windows/
+linux/
+web/
+
+# Non-code directories
+dashboard/
+marketing/
+
+# Python type checker
+.pyre_configuration
+

@@ -1,89 +1,111 @@
-# ChefVision AI - Smart Recipe Advisor
+# ChefVision AI
 
-> [!NOTE]
-> **Status: Active Development** — This project is currently in active development. Features are continuously being updated, refactored, and improved.
+> **Status: Active Development** — Features are continuously being updated and improved.
 
-ChefVision AI is a smart recipe advisor and ingredient recognition system powered by advanced AI and computer vision. It allows users to scan kitchen ingredients using their camera, receive personalized recipe recommendations, and interact with an integrated voice assistant for hands-free cooking guidance.
+A mobile-first recipe advisor that uses AI and computer vision to recognize kitchen ingredients from camera photos, generate personalized recipes, and guide users through cooking with a voice assistant. Users can manage their pantry, scan grocery receipts, track ingredient stock, and get hands-free cooking instructions.
 
-This repository is a sanitized public demo of the project, showcasing frontend layout, backend APIs, data structures, and mobile app flows for portfolio review, while keeping private API keys and database credentials safe.
+Built with **Flutter** (mobile) and **FastAPI + PostgreSQL + Redis** (backend), powered by **Google Gemini Vision** for ingredient recognition.
 
-## What The Project Shows
+This repository is a sanitized public version — all API keys, database credentials, and Firebase configurations have been removed.
 
-- **AI-Powered Ingredient Scanning**: Mobile client camera workflow that detects raw ingredients using Gemini AI.
-- **Voice-Assisted Cooking**: Hands-free instruction reading and interactive speech commands during food preparation.
-- **Robust Caching & Queueing**: Python (FastAPI) backend using Redis for response caching and fast lookup.
+---
 
-## Repository Structure
+## Features
 
-Inside this folder, you will find:
-- **`lib/`**, **`android/`**, **`ios/`**: The core Flutter mobile application code.
-- **`backend/`**: Python FastAPI backend supporting authentication, recipe pipelines, database ORM, and Gemini API connectors.
+### 🍳 Core Experience
+- **Ingredient Scanner:** Camera-based workflow that captures photos of kitchen ingredients and uses Gemini Vision to identify them.
+- **Recipe Engine:** AI-generated personalized recipes based on available ingredients, dietary preferences, and cooking skill level.
+- **Cooking Mode:** Step-by-step cooking instructions with a built-in timer and completion tracking.
+- **Voice Assistant:** Hands-free cooking guidance with speech-to-text commands and text-to-speech instruction reading.
+
+### 🛒 Pantry & Shopping
+- **Pantry Manager:** Track ingredient inventory with quantities, expiry awareness, and stock levels.
+- **Receipt Scanner:** Photograph grocery receipts to automatically extract and add purchased items to the pantry.
+- **Stock Analysis:** Visual dashboard of pantry contents, usage patterns, and low-stock alerts.
+- **Shopping List:** Maintain and manage a shopping list synced with pantry needs.
+
+### 👤 User Management
+- **Auth System:** Registration, login, email verification, and profile editing.
+- **Subscription Tiers:** Premium features gated behind subscription management (iyzico payment integration).
+- **Guest Mode:** Limited access for users who want to explore before creating an account.
+- **Notifications:** Push notifications via Firebase for recipe suggestions, stock reminders, and updates.
+
+### 🌍 Localization
+- Multi-language support: Turkish, English, German, French, Spanish, Italian — with full ARB-based localization infrastructure.
+
+---
+
+## Architecture
+
+### Mobile App (Flutter)
+```
+lib/
+├── screens/          # 16 screens (camera, cooking mode, pantry, recipes, auth, subscriptions...)
+├── providers/        # State management (auth, recipe, timer, notification, guest, app)
+├── models/           # Data models (recipe, ingredient, pantry, shopping, user, voice commands)
+├── services/         # API clients, voice assistant, payment
+├── config/           # API endpoints, theme
+├── l10n/             # Localization files (6 languages)
+└── utils/            # Error translation & localization
+```
+
+### Backend (FastAPI + Python)
+```
+backend/app/
+├── routers/          # auth, recipes, ingredients, pantry, voice, subscription, admin, honeypot
+├── services/         # gemini_vision, recipe_engine, voice_assistant, payment (iyzico), firebase, redis
+├── core/             # encryption, rate_limiter, cache, logger, settings_store
+├── models/           # SQLAlchemy ORM models
+├── schemas/          # Pydantic validation schemas
+└── tests/            # Router integration tests
+```
+
+---
 
 ## Tech Stack
 
-- **Mobile Client**: Flutter, Dart, Camera API, local storage, Speech-to-Text & Text-to-Speech integration.
-- **Backend API**: Python, FastAPI, SQLAlchemy, PostgreSQL, Redis, Firebase Admin SDK.
+| Component | Technologies |
+|-----------|-------------|
+| Mobile | Flutter, Dart, Camera API, Speech-to-Text, Text-to-Speech, Firebase |
+| Backend | Python, FastAPI, SQLAlchemy, PostgreSQL, Redis |
+| AI | Google Gemini Vision API |
+| Payments | iyzico payment gateway |
+| Auth | JWT + Firebase Admin SDK |
 
-## Demo & Security Safeguards
+---
 
-- No `.env` files are included.
-- No live database passwords, Gemini AI API keys, or Firebase keys are committed.
-- Speech engines and Gemini client endpoints are configured with developer placeholders.
-- Database runs locally using standard configurations.
+## Setup
 
-## Setup & Running Instructions
+### Backend
+```bash
+cd backend
+docker-compose up -d              # Start PostgreSQL + Redis
+python3.11 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env              # Configure API keys
+uvicorn main:app --reload
+```
 
-### 1. Python Backend
+### Mobile App
 
-The backend requires **PostgreSQL** and **Redis**. A docker-compose file is provided to start these services locally.
+> Requires iOS Simulator, Android Emulator, or a physical device. Web target is not recommended due to platform-specific dependencies.
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+```bash
+flutter pub get
 
-2. Start the local database and redis containers:
-   ```bash
-   docker-compose up -d
-   ```
+# iOS
+flutter run -d iphonesimulator
 
-3. Create and activate a Python virtual environment (recommended Python 3.11 or 3.12):
-   ```bash
-   python3.11 -m venv venv
-   source venv/bin/activate
-   ```
+# Android
+flutter run -d <android-device-id>
 
-4. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
+# macOS Desktop (macOS 11.0+)
+flutter run -d macos
+```
 
-5. Configure your environment variables in `.env` (copied from `.env.example`).
+---
 
-6. Start the FastAPI development server:
-   ```bash
-   uvicorn main:app --reload
-   ```
+## License
 
-### 2. Flutter Mobile App
-
-The mobile app should be tested on **iOS Simulator**, **Android Emulator**, or a physical device (web/Chrome target is not recommended due to Apple StoreKit platform dependencies).
-
-1. Install dependencies from the project root:
-   ```bash
-   flutter pub get
-   ```
-
-2. Run the application:
-   - For iOS Simulator:
-     ```bash
-     flutter run -d iphonesimulator
-     ```
-   - For Android Emulator:
-     ```bash
-     flutter run -d <android-device-id>
-     ```
-   - For macOS desktop application (requires macOS 11.0+):
-     ```bash
-     flutter run -d macos
-     ```
+MIT
